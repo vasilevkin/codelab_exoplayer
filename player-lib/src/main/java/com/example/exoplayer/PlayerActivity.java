@@ -24,9 +24,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.source.ConcatenatingMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.source.ProgressiveMediaSource;
+import com.google.android.exoplayer2.source.dash.DashMediaSource;
+import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
@@ -90,10 +90,18 @@ public class PlayerActivity extends AppCompatActivity {
     // Private methods
 
     private void initializePlayer() {
-        player = ExoPlayerFactory.newSimpleInstance(this);
+        if (player == null) {
+            DefaultTrackSelector trackSelector = new DefaultTrackSelector();
+            trackSelector.setParameters(
+                    trackSelector.buildUponParameters().setMaxVideoSizeSd());
+            player = ExoPlayerFactory.newSimpleInstance(this, trackSelector);
+        }
+        // Remove or comment out
+//        player = ExoPlayerFactory.newSimpleInstance(this);
         playerView.setPlayer(player);
 
-        Uri uri = Uri.parse(getString(R.string.media_url_mp4));
+        Uri uri = Uri.parse(getString(R.string.media_url_dash));
+//        Uri uri = Uri.parse(getString(R.string.media_url_mp4));
         MediaSource mediaSource = buildMediaSource(uri);
 
         player.setPlayWhenReady(playWhenReady);
@@ -102,21 +110,27 @@ public class PlayerActivity extends AppCompatActivity {
     }
 
     private MediaSource buildMediaSource(Uri uri) {
-        // These factories are used to construct two media sources below
         DataSource.Factory dataSourceFactory =
                 new DefaultDataSourceFactory(this, "exoplayer-codelab");
-        ProgressiveMediaSource.Factory mediaSourceFactory =
-                new ProgressiveMediaSource.Factory(dataSourceFactory);
-
-        // Create a media source using the supplied URI
-        MediaSource mediaSource1 = mediaSourceFactory.createMediaSource(uri);
-
-        // Additionally create a media source using an MP3
-        Uri audioUri = Uri.parse(getString(R.string.media_url_mp3));
-        MediaSource mediaSource2 = mediaSourceFactory.createMediaSource(audioUri);
-
-        return new ConcatenatingMediaSource(mediaSource1, mediaSource2);
+        DashMediaSource.Factory mediaSourceFactory = new DashMediaSource.Factory(dataSourceFactory);
+        return mediaSourceFactory.createMediaSource(uri);
     }
+//    private MediaSource buildMediaSource(Uri uri) {
+//        // These factories are used to construct two media sources below
+//        DataSource.Factory dataSourceFactory =
+//                new DefaultDataSourceFactory(this, "exoplayer-codelab");
+//        ProgressiveMediaSource.Factory mediaSourceFactory =
+//                new ProgressiveMediaSource.Factory(dataSourceFactory);
+//
+//        // Create a media source using the supplied URI
+//        MediaSource mediaSource1 = mediaSourceFactory.createMediaSource(uri);
+//
+//        // Additionally create a media source using an MP3
+//        Uri audioUri = Uri.parse(getString(R.string.media_url_mp3));
+//        MediaSource mediaSource2 = mediaSourceFactory.createMediaSource(audioUri);
+//
+//        return new ConcatenatingMediaSource(mediaSource1, mediaSource2);
+//    }
 //    private MediaSource buildMediaSource(Uri uri) {
 //        DataSource.Factory dataSourceFactory =
 //                new DefaultDataSourceFactory(this, "exoplayer-codelab");
