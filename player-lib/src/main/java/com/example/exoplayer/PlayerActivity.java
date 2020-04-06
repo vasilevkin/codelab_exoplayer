@@ -18,11 +18,14 @@ package com.example.exoplayer;
 import android.annotation.SuppressLint;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.ExoPlayerFactory;
+import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.dash.DashMediaSource;
@@ -44,6 +47,9 @@ public class PlayerActivity extends AppCompatActivity {
     private long playbackPosition = 0;
     private int currentWindow = 0;
 
+    private PlaybackStateListener playbackStateListener;
+    private static final String TAG = PlayerActivity.class.getName();
+
     // Lifecycle methods
 
     @Override
@@ -51,6 +57,7 @@ public class PlayerActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_player);
 
+        playbackStateListener = new PlaybackStateListener();
         playerView = findViewById(R.id.video_view);
     }
 
@@ -95,6 +102,9 @@ public class PlayerActivity extends AppCompatActivity {
             trackSelector.setParameters(
                     trackSelector.buildUponParameters().setMaxVideoSizeSd());
             player = ExoPlayerFactory.newSimpleInstance(this, trackSelector);
+
+            player.addListener(playbackStateListener);
+//            player.prepare(mediaSource, false, false);
         }
         // Remove or comment out
 //        player = ExoPlayerFactory.newSimpleInstance(this);
@@ -154,8 +164,37 @@ public class PlayerActivity extends AppCompatActivity {
             playWhenReady = player.getPlayWhenReady();
             playbackPosition = player.getCurrentPosition();
             currentWindow = player.getCurrentWindowIndex();
+
+            player.removeListener(playbackStateListener);
+
             player.release();
             player = null;
+        }
+    }
+
+    private class PlaybackStateListener implements Player.EventListener {
+
+        @Override
+        public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+            String stateString;
+            switch (playbackState) {
+                case ExoPlayer.STATE_IDLE:
+                    stateString = "ExoPlayer.STATE_IDLE      -";
+                    break;
+                case ExoPlayer.STATE_BUFFERING:
+                    stateString = "ExoPlayer.STATE_BUFFERING -";
+                    break;
+                case ExoPlayer.STATE_READY:
+                    stateString = "ExoPlayer.STATE_READY     -";
+                    break;
+                case ExoPlayer.STATE_ENDED:
+                    stateString = "ExoPlayer.STATE_ENDED     -";
+                    break;
+                default:
+                    stateString = "UNKNOWN_STATE             -";
+                    break;
+            }
+            Log.d(TAG, "changed state to " + stateString + " playWhenReady: " + playWhenReady);
         }
     }
 }
