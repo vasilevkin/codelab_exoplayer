@@ -92,7 +92,7 @@ public class PlayerActivity extends AppCompatActivity {
         player = ExoPlayerFactory.newSimpleInstance(this);
         playerView.setPlayer(player);
 
-        Uri uri = Uri.parse(getString(R.string.media_url_mp3));
+        Uri uri = Uri.parse(getString(R.string.media_url_mp4));
         MediaSource mediaSource = buildMediaSource(uri);
 
         player.setPlayWhenReady(playWhenReady);
