@@ -34,6 +34,7 @@
 <!--            style="@style/ExoMediaButton.Previous"/>-->
 
         <ImageButton android:id="@id/exo_rew"
+            android:tint="#FF00A6FF"
             style="@style/ExoMediaButton.Rewind"/>
 
         <ImageButton android:id="@id/exo_shuffle"
@@ -74,7 +75,7 @@
             android:paddingLeft="4dp"
             android:paddingRight="4dp"
             android:includeFontPadding="false"
-            android:textColor="#FFBEBEBE"/>
+            android:textColor="#FF00A6FF"/>
 
         <View android:id="@id/exo_progress_placeholder"
             android:layout_width="0dp"
@@ -89,7 +90,7 @@
             android:paddingLeft="4dp"
             android:paddingRight="4dp"
             android:includeFontPadding="false"
-            android:textColor="#FFBEBEBE"/>
+            android:textColor="#FF00A6FF"/>
 
     </LinearLayout>
 
