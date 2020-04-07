@@ -21,6 +21,7 @@ limitations under the License. -->
         android:id="@+id/video_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        app:controller_layout_id="@layout/custom_playback_control"
         app:fastforward_increment="30000"
         app:rewind_increment="30000"
         app:show_timeout="10000"
